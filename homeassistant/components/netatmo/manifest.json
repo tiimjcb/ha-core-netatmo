@@ -1,6 +1,7 @@
 {
   "domain": "netatmo",
-  "name": "Netatmo",
+  "name": "Netatmo (Custom)",
+  "version": "2025.12.0",
   "after_dependencies": ["cloud", "media_source"],
   "codeowners": ["@cgtobi"],
   "config_flow": true,
@@ -12,5 +13,7 @@
   "integration_type": "hub",
   "iot_class": "cloud_polling",
   "loggers": ["pyatmo"],
-  "requirements": ["pyatmo==9.2.3"]
+  "requirements": [
+    "git+https://github.com/tiimjcb/pyatmo.git@feat/normalize-weather-attributes-homestatus"
+  ]
 }
