@@ -183,16 +183,35 @@ class NetatmoDataHandler:
         We do up to BATCH_SIZE calls in one update in order
         to minimize the calls on the api service.
         """
+        ## added some logging there
         for data_class in islice(self._queue, 0, BATCH_SIZE * self._interval_factor):
+            time_until_next = data_class.next_scan - time()
             if data_class.next_scan > time():
+                _LOGGER.debug(
+                    "[SKIP] Publisher %s next scan in %.1fs",
+                    data_class.name,
+                    time_until_next
+                )
                 continue
 
             if publisher := data_class.name:
                 error = await self.async_fetch_data(publisher)
 
                 if error:
-                    self.publisher[publisher].next_scan = (
-                        time() + data_class.interval * 10
+                    ### MODIFIED THE PENALTY THERE
+                    # todo: check this
+                    if publisher.startswith("home-"):
+                        penalty_multiplier = 2
+                    else:
+                        penalty_multiplier = 3
+
+                    penalty_interval = data_class.interval * penalty_multiplier
+                    self.publisher[publisher].next_scan = time() + penalty_interval
+                    _LOGGER.warning(
+                        "[ERROR] Publisher %s had error, next scan in %.1fs (penalty: %dx interval)",
+                        publisher,
+                        penalty_interval,
+                        penalty_multiplier
                     )
                 else:
                     self.publisher[publisher].next_scan = time() + data_class.interval
@@ -386,7 +405,7 @@ class NetatmoDataHandler:
                         self,
                         module,
                         home.entity_id,
-                        WEATHER,
+                        signal_home,    ## modified the WEATHER signal here to use signal_home (HOME-<home_id>)
                     ),
                 )
 
@@ -451,3 +470,4 @@ class NetatmoDataHandler:
                     signal_home,
                 ),
             )
+

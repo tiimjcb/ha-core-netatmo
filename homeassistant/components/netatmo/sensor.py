@@ -540,9 +540,8 @@ class NetatmoWeatherSensor(NetatmoWeatherModuleEntity, SensorEntity):
     @callback
     def async_update_callback(self) -> None:
         """Update the entity's state."""
-        value = cast(
-            StateType, getattr(self.device, self.entity_description.netatmo_name)
-        )
+        value_raw = getattr(self.device, self.entity_description.netatmo_name)
+        value = cast(StateType, value_raw)
         if value is not None:
             value = self.entity_description.value_fn(value)
         self._attr_native_value = value

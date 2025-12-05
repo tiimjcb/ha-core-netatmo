@@ -178,13 +178,14 @@ class NetatmoWeatherModuleEntity(NetatmoModuleEntity):
     def __init__(self, device: NetatmoDevice) -> None:
         """Set up a Netatmo weather module entity."""
         super().__init__(device)
-        assert self.device.device_category
-        category = self.device.device_category.name
+        home_id = self.device.home.entity_id
         self._publishers.extend(
             [
+                ## modified here to subscribe to home endpoint instead of the weather one
                 {
-                    "name": category,
-                    SIGNAL_NAME: category,
+                    "name": "home",
+                    SIGNAL_NAME: device.signal_name,
+                    "home_id": home_id,
                 },
             ]
         )
