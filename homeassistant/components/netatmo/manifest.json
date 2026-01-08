@@ -14,6 +14,6 @@
   "iot_class": "cloud_polling",
   "loggers": ["pyatmo"],
   "requirements": [
-    "git+https://github.com/tiimjcb/pyatmo.git@feat/normalize-weather-attributes-homestatus"
+    "pyatmo@git+https://github.com/tiimjcb/pyatmo.git@feat/normalize-weather-attributes-homestatus"
   ]
 }
